@@ -5,16 +5,45 @@ import java.util.Set;
 
 public interface RedisClient {
     
-void addRedis(String name,String age);
+    /**
+     * *添加，key，value
+     * @param key,value
+     */
+    void set(String key,Object value);
     
-    Object getRedis(String key);
+    /**
+     * *获取
+     * @param key
+     * @return
+     */
+    Object get(String key);
     
+    /**
+     * *添加List
+     * @param key，List
+     * @return
+     */
     void addList(String key,List<?> value);
     
+    /**
+     * *获取List
+     * @param key
+     * @return
+     */
     List<?> getList(String key);
     
+    /**
+     * *添加Set
+     * @param key，Set
+     * @return
+     */
     void addSet(String key,Set<?> value);
     
+    /**
+     * *获取Set
+     * @param key
+     * @return
+     */
     Set<?> getSet(String key);
     
 }

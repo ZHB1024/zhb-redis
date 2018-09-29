@@ -16,7 +16,7 @@ public class RedisTemplateUtil {
     
     public void set(String key, Object value) {  
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();  
-        valueOperations.set(key, value);  
+        valueOperations.set(key, value,0);  
     }  
   
     public Object get(String key) {  

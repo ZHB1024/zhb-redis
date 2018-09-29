@@ -13,12 +13,11 @@ public class RedisClientImpl extends RedisTemplateBase implements RedisClient {
 
     private Logger log = LoggerFactory.getLogger(RedisClientImpl.class);
     
-    public void addRedis(String name,String age) {
-        redisTemplateUtil.set(name, age);
-        log.info(name + " : " + redisTemplateUtil.get(name));
+    public void set(String key,Object value) {
+        redisTemplateUtil.set(key, value);
     }
     
-    public Object getRedis(String key){
+    public Object get(String key){
         return redisTemplateUtil.get(key);
     }
     
