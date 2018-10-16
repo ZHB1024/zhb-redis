@@ -21,24 +21,37 @@
 
     <!--（1）如果你有多个数据源需要通过<context:property-placeholder管理，且不愿意放在一个配置文件里，那么一定要加上ignore-unresolvable=“true"-->  
     <!--（2）注意新版的（具体从哪个版本开始不清楚，有兴趣可以查一下）JedisPoolConfig的property name，不是maxActive而是maxTotal，而且没有maxWait属性，建议看一下Jedis源码。-->  
-    <!-- redis连接池 -->  
-    <bean id="jedisConfig" class="redis.clients.jedis.JedisPoolConfig">  
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">  
         <property name="maxTotal" value="${sys.redis.maxActive}"></property>  
         <property name="maxIdle" value="${sys.redis.maxIdle}"></property>  
         <property name="maxWaitMillis" value="${sys.redis.maxWait}"></property>  
         <property name="testOnBorrow" value="${sys.redis.testOnBorrow}"></property>  
     </bean>  
+    
+    <!-- redis连接池 -->  
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool" scope="singleton"  lazy-init="true" >
+    	<constructor-arg  index="0"  ref="jedisPoolConfig" />  
+    	<constructor-arg  index="1"  value="${sys.redis.host}" />  
+    	<constructor-arg  index="2"  value="${sys.redis.port}" type="int" />
+    	<constructor-arg  index="3"  value="${sys.redis.timeout}" type="int" />
+    	<constructor-arg  index="4"  value="${sys.redis.password}" />
+	</bean>
+	
+	<bean id="redisClient" class="com.zhb.forever.redis.client.impl.RedisClientImpl">
+      <property name="jedisPool" ref="jedisPool"></property>
+	</bean>
+	
     <!-- redis连接工厂 -->  
-    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">  
+    <!-- <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">  
         <property name="hostName" value="${sys.redis.host}"></property>  
         <property name="port" value="${sys.redis.port}"></property>  
         <property name="password" value="${sys.redis.password}"></property>  
         <property name="poolConfig" ref="jedisConfig"></property>  
     </bean>  
-    <!-- redis操作模板，这里采用尽量面向对象的模板 -->  
+    redis操作模板，这里采用尽量面向对象的模板  
     <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">  
         <property name="connectionFactory" ref="redisConnectionFactory"/>  
-        <!--     如果不配置Serializer，那么存储的时候只能使用String，如果用对象类型存储，那么会提示错误 can't cast to String！！！-->  
+            如果不配置Serializer，那么存储的时候只能使用String，如果用对象类型存储，那么会提示错误 can't cast to String！！！  
         <property name="keySerializer">  
             <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>  
         </property>  
@@ -52,13 +65,9 @@
         	<bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />        
         </property>
 
-        <!--开启事务-->  
+        开启事务  
         <property name="enableTransactionSupport" value="true"/>  
-    </bean>
+    </bean> -->
     
-    <bean id="redisClient" class="com.zhb.forever.redis.client.impl.RedisClientImpl">
-      <property name="redisTemplate" ref="redisTemplate"></property>
-	</bean>
-	
 </beans>    
     
