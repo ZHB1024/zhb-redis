@@ -23,32 +23,40 @@ public class RedisClientImpl implements RedisClient {
         Jedis jedis = jedisPool.getResource();
         jedis.del(key);
         jedis.set(key, value);
+        closeResource(jedis);
     }
     
     public  String get(String key) {
         Jedis jedis = jedisPool.getResource();
-        return jedis.get(key);
+        String value = jedis.get(key);
+        closeResource(jedis);
+        return value;
     }
     
     public  void del(String key) {
         Jedis jedis = jedisPool.getResource();
         jedis.del(key);
+        closeResource(jedis);
     }
     
     public  void set(byte[] key,byte[] value) {
         Jedis jedis = jedisPool.getResource();
         jedis.del(key);
         jedis.set(key, value);
+        closeResource(jedis);
     }
     
     public  byte[] get(byte[] key) {
         Jedis jedis = jedisPool.getResource();
-        return jedis.get(key);
+        byte[] bytes = jedis.get(key);
+        closeResource(jedis);
+        return bytes;
     }
     
     public  void del(byte[] key) {
         Jedis jedis = jedisPool.getResource();
         jedis.del(key);
+        closeResource(jedis);
     }
     
     
@@ -62,13 +70,15 @@ public class RedisClientImpl implements RedisClient {
                 jedis.lpush(key, string);
             }
         }
-        
+        closeResource(jedis);
     }
     
     public  List<String> getList(String key) {
-        Jedis jedis = jedisPool.getResource();
         if (StringUtil.isNotBlank(key)) {
-            return jedis.lrange(key, 0,-1);
+            Jedis jedis = jedisPool.getResource();
+            List<String> values = jedis.lrange(key, 0,-1);
+            closeResource(jedis);
+            return values;
         }
         return null;
     }
@@ -76,17 +86,21 @@ public class RedisClientImpl implements RedisClient {
     public  void delList(String key) {
         Jedis jedis = jedisPool.getResource();
         jedis.del(key);
+        closeResource(jedis);
     }
     
 //map---------------------------------------------------------------
     public  void setMap(String key,Map<String, String> map) {
         Jedis jedis = jedisPool.getResource();
         jedis.hmset(key, map);
+        closeResource(jedis);
     }
     
     public  List<String> getMap(String key) {
         Jedis jedis = jedisPool.getResource();
-        return jedis.hvals(key);
+        List<String> values = jedis.hvals(key);
+        closeResource(jedis);
+        return values;
     }
 
     
